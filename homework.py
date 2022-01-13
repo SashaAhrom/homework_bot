@@ -79,22 +79,30 @@ def get_api_answer(current_timestamp):
 
 def check_response(response):
     """Check correct API."""
+    if type(response) != dict:
+        raise TypeError(f'Response не словарь а: {type(response)}')
+    if response.get('homeworks') is None or response.get(
+            'current_date') is None:
+        raise CheckApiKey('Отсутствие ожидаемых ключей в ответе API')
     if type(response['homeworks']) != list or type(
             response['current_date']) != int:
         raise CheckApiKey('Отсутствие ожидаемых ключей в ответе API')
-    homeworks = response['homeworks']
-    return homeworks
+    return response['homeworks']
 
 
 def parse_status(homework):
     """Status last homework."""
-    homework_name = homework['homework_name']
+    if homework.get('homework_name') is None:
+        raise KeyError('Отсутствие ключа-"homework_name" в "homework".')
+    if homework.get('status') is None:
+        raise KeyError('Отсутствие ключа-"status" в "homework".')
     homework_status = homework['status']
-    logger.info(f'Работа: {homework_name}')
     if homework_status not in HOMEWORK_STATUSES:
         raise CheckHomeworkStatus('Недокументированный статус домашней работы,'
-                                  'обнаруженный в ответе API.')
+                                  f'в ответе API: {homework_status}')
     verdict = HOMEWORK_STATUSES[homework_status]
+    homework_name = homework['homework_name']
+    logger.info(f'Работа: {homework_name}')
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
 
@@ -122,7 +130,13 @@ def main():
     """Basic logic of the bot."""
     if not check_tokens():
         raise TokensChatIdError('Tokens or chat_id missing.')
-    bot = telegram.Bot(token=TELEGRAM_TOKEN)
+    try:
+        bot = telegram.Bot(token=TELEGRAM_TOKEN)
+    except Exception as error:
+        message = f'Ошибка Telegram бота: {error}'
+        logger.error(message)
+        time.sleep(RETRY_TIME)
+        main()
     current_timestamp = int(time.time())
     last_message = None
     while True:
