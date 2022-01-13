@@ -100,17 +100,17 @@ def parse_status(homework):
 
 def check_tokens():
     """Check tokens and chat_id."""
-    if type(TELEGRAM_CHAT_ID) != int:
+    if type(TELEGRAM_CHAT_ID) is not None:
         logger.critical('Отсутствует обязательная переменная окружения:'
                         '"TELEGRAM_CHAT_ID" Программа принудительно'
                         'остановлена.')
         return False
-    elif type(TELEGRAM_TOKEN) != str:
+    elif type(TELEGRAM_TOKEN) is not None:
         logger.critical('Отсутствует обязательная переменная окружения:'
                         '"TELEGRAM_TOKEN" Программа принудительно'
                         'остановлена.')
         return False
-    elif type(PRACTICUM_TOKEN) != str:
+    elif type(PRACTICUM_TOKEN) is not None:
         logger.critical('Отсутствует обязательная переменная окружения:'
                         '"PRACTICUM_TOKEN" Программа принудительно'
                         'остановлена.')
