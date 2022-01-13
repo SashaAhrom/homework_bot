@@ -16,7 +16,7 @@ class CheckHomeworkStatus(Exception):
     pass
 
 
-class SendMessage(Exception):
-    """Status code is not 200."""
+class ResponseError(Exception):
+    """Wrong response."""
 
     pass
