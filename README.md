@@ -1,4 +1,4 @@
-# homework_bot
+# homework_bot(educational project)
 ## Description
 ```
 - query the Practicum.Homework service API once every 10 minutes
